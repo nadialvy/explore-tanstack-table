@@ -1,5 +1,5 @@
-import type { CellContext, ColumnDef } from "@tanstack/react-table";
-import React, { useMemo } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
+import { useMemo } from "react";
 import "~/app.css";
 import useElectronicGoods, {
   type ElectronicGoods,
@@ -10,29 +10,32 @@ export default function ProductTable() {
   const { data, error } = useElectronicGoods();
 
   // Define table columns to pass into table
-  const columns = useMemo(
+  const columns = useMemo<ColumnDef<ElectronicGoods>[]>(
     () => [
       {
-        accessorKey: "name", // Accessor key for the "name" field from data object
-        header: "Name", // Column header
+        accessorKey: "name",
+        header: "Name",
         filterFn: "includesString",
+        enableSorting: true,
       },
       {
         accessorKey: "category",
         header: "Category",
         filterFn: "includesString",
+        enableSorting: true,
       },
       {
         accessorKey: "price",
         header: "Price",
-        cell: (info: CellContext<ElectronicGoods, number>) =>
-          `$${info.getValue().toFixed(2)}`, // Format price as currency
+        cell: (info) => `$${(info.getValue() as number).toFixed(2)}`,
         filterFn: "equals",
+        enableSorting: true,
       },
       {
         accessorKey: "inStock",
         header: "In Stock",
         filterFn: "includesString",
+        enableSorting: true,
       },
     ],
     []
@@ -41,7 +44,5 @@ export default function ProductTable() {
   if (error) return <div>{String(error)}</div>;
   if (!data || data.length === 0) return <div>Loading...</div>;
 
-  return (
-    <BasicTable data={data} columns={columns as ColumnDef<ElectronicGoods>[]} />
-  );
+  return <BasicTable data={data} columns={columns} />;
 }
