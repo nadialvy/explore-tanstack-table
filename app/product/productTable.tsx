@@ -15,20 +15,24 @@ export default function ProductTable() {
       {
         accessorKey: "name", // Accessor key for the "name" field from data object
         header: "Name", // Column header
+        filterFn: "includesString",
       },
       {
         accessorKey: "category",
         header: "Category",
+        filterFn: "includesString",
       },
       {
         accessorKey: "price",
         header: "Price",
         cell: (info: CellContext<ElectronicGoods, number>) =>
           `$${info.getValue().toFixed(2)}`, // Format price as currency
+        filterFn: "equals",
       },
       {
         accessorKey: "inStock",
         header: "In Stock",
+        filterFn: "includesString",
       },
     ],
     []
