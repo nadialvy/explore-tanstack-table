@@ -25,13 +25,17 @@ export async function shareMediaFile(options: ShareMediaOptions) {
     shareUrlDirectly = false,
   } = options;
 
-  // Jika shareUrlDirectly, langsung share URL tanpa download
-  if (shareUrlDirectly) {
+  // detect is it public url
+  const isExternalUrl = url.startsWith("http://") || url.startsWith("https://");
+
+  // Untuk external URL, share langsung (better untuk Stories)
+  // Untuk local asset, fetch & create File object (works best)
+  if (shareUrlDirectly || isExternalUrl) {
     return shareUrlOnly({ url, title, text });
   }
 
   try {
-    // Coba fetch file
+    // Coba fetch file (untuk local assets)
     const res = await fetch(url);
 
     if (!res.ok) {
