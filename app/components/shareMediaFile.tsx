@@ -31,8 +31,11 @@ export async function shareMediaFile(options: ShareMediaOptions) {
   }
 
   try {
-    // Coba fetch file
-    const res = await fetch(url);
+    // Coba fetch file (with CORS mode for cross-origin requests)
+    const res = await fetch(url, {
+      mode: "cors",
+      credentials: "omit",
+    });
 
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
@@ -43,15 +46,41 @@ export async function shareMediaFile(options: ShareMediaOptions) {
     let mimeType = blob.type;
     let finalFilename = filename;
 
+    // Deteksi extension dari URL untuk MIME type & filename fallback
+    const urlPath = url.split("?")[0]; // Remove query params
+    const urlExt = urlPath.split(".").pop()?.toLowerCase();
+
     // Deteksi atau fallback MIME type
     if (!mimeType || mimeType === "application/octet-stream") {
-      // Blob tidak punya MIME type yang jelas, gunakan type parameter
-      if (type === "video") {
-        mimeType = "video/mp4";
-      } else if (type === "image") {
-        mimeType = "image/png";
-      } else if (finalFilename) {
-        // Coba detect dari extension filename
+      // Priority 1: Detect dari URL extension
+      if (urlExt) {
+        if (urlExt === "mp4" || urlExt === "webm" || urlExt === "mov") {
+          mimeType = `video/${urlExt}`;
+        } else if (
+          urlExt === "png" ||
+          urlExt === "jpg" ||
+          urlExt === "jpeg" ||
+          urlExt === "gif" ||
+          urlExt === "webp"
+        ) {
+          mimeType = urlExt === "jpg" ? "image/jpeg" : `image/${urlExt}`;
+        }
+      }
+
+      // Priority 2: Gunakan type parameter
+      if (!mimeType || mimeType === "application/octet-stream") {
+        if (type === "video") {
+          mimeType = "video/mp4";
+        } else if (type === "image") {
+          mimeType = "image/png";
+        }
+      }
+
+      // Priority 3: Detect dari filename parameter
+      if (
+        (!mimeType || mimeType === "application/octet-stream") &&
+        finalFilename
+      ) {
         const ext = finalFilename.split(".").pop()?.toLowerCase();
         if (ext === "mp4" || ext === "webm" || ext === "mov") {
           mimeType = `video/${ext}`;
@@ -68,14 +97,21 @@ export async function shareMediaFile(options: ShareMediaOptions) {
 
     // Generate filename jika tidak ada
     if (!finalFilename) {
-      if (mimeType.startsWith("video/")) {
-        finalFilename = "share-video." + (mimeType.split("/")[1] || "mp4");
-      } else if (mimeType.startsWith("image/")) {
-        finalFilename = "share-image." + (mimeType.split("/")[1] || "png");
+      // Try to get filename from URL
+      const urlFilename = urlPath.split("/").pop();
+      if (urlFilename && urlFilename.includes(".")) {
+        finalFilename = urlFilename;
       } else {
-        finalFilename =
-          type === "video" ? "share-video.mp4" : "share-image.png";
-        mimeType = type === "video" ? "video/mp4" : "image/png";
+        // Generate based on MIME type
+        if (mimeType.startsWith("video/")) {
+          finalFilename = "share-video." + (mimeType.split("/")[1] || "mp4");
+        } else if (mimeType.startsWith("image/")) {
+          finalFilename = "share-image." + (mimeType.split("/")[1] || "png");
+        } else {
+          finalFilename =
+            type === "video" ? "share-video.mp4" : "share-image.png";
+          mimeType = type === "video" ? "video/mp4" : "image/png";
+        }
       }
     }
 
