@@ -41,22 +41,45 @@ export async function shareMediaFile(options: ShareMediaOptions) {
     const blob = await res.blob();
 
     let mimeType = blob.type;
-    let defaultFilename = filename;
+    let finalFilename = filename;
 
-    if (!defaultFilename) {
-      // generate based on type
+    // Deteksi atau fallback MIME type
+    if (!mimeType || mimeType === "application/octet-stream") {
+      // Blob tidak punya MIME type yang jelas, gunakan type parameter
+      if (type === "video") {
+        mimeType = "video/mp4";
+      } else if (type === "image") {
+        mimeType = "image/png";
+      } else if (finalFilename) {
+        // Coba detect dari extension filename
+        const ext = finalFilename.split(".").pop()?.toLowerCase();
+        if (ext === "mp4" || ext === "webm" || ext === "mov") {
+          mimeType = `video/${ext}`;
+        } else if (
+          ext === "png" ||
+          ext === "jpg" ||
+          ext === "jpeg" ||
+          ext === "gif"
+        ) {
+          mimeType = ext === "jpg" ? "image/jpeg" : `image/${ext}`;
+        }
+      }
+    }
+
+    // Generate filename jika tidak ada
+    if (!finalFilename) {
       if (mimeType.startsWith("video/")) {
-        defaultFilename = "share-video." + (mimeType.split("/")[1] || "mp4");
+        finalFilename = "share-video." + (mimeType.split("/")[1] || "mp4");
       } else if (mimeType.startsWith("image/")) {
-        defaultFilename = "share-image." + (mimeType.split("/")[1] || "png");
+        finalFilename = "share-image." + (mimeType.split("/")[1] || "png");
       } else {
-        defaultFilename =
+        finalFilename =
           type === "video" ? "share-video.mp4" : "share-image.png";
         mimeType = type === "video" ? "video/mp4" : "image/png";
       }
     }
 
-    const file = new File([blob], defaultFilename, { type: mimeType });
+    const file = new File([blob], finalFilename, { type: mimeType });
 
     const mediaType = mimeType.startsWith("video/") ? "video" : "gambar";
     const shareTitle = title || `Bagikan ${mediaType}`;
@@ -77,7 +100,7 @@ export async function shareMediaFile(options: ShareMediaOptions) {
     // fallback => download
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = defaultFilename;
+    a.download = finalFilename;
     a.click();
     URL.revokeObjectURL(a.href);
     return { ok: true, method: "download" as const, fileType: mediaType };
@@ -135,11 +158,4 @@ function shareUrlOnly({
     fileType: "url" as const,
     message: "Opened in new tab",
   });
-}
-
-/**
- * Legacy function for backward compatibility
- */
-export async function shareImageFile(imgUrl: string, filename = "share.png") {
-  return shareMediaFile({ url: imgUrl, filename, type: "image" });
 }

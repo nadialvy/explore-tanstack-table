@@ -1,7 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 import "~/app.css";
-import { shareImageFile } from "~/components/ShareImage";
+import { shareMediaFile } from "~/components/shareMediaFile";
 import useElectronicGoods, {
   type ElectronicGoods,
 } from "~/mutations/useElectronicGoods";
@@ -47,12 +47,19 @@ export default function ProductTable() {
 
   return (
     <div className="w-full h-screen flex justify-center items-center ">
-      {/* use share image here */}
+      {/* use share media here */}
       <button
-        className=" bg-blue-400 "
-        onClick={() => shareImageFile("/cat.mp4")}
+        className=" bg-blue-400 px-4 py-2 rounded text-white mr-2"
+        onClick={() => shareMediaFile({ url: "/cat.png" })}
       >
         Share Image
+      </button>
+
+      <button
+        className=" bg-green-400 px-4 py-2 rounded text-white"
+        onClick={() => shareMediaFile({ url: "/cat.mp4", type: "video" })}
+      >
+        Share Video
       </button>
 
       {/* <BasicTable data={data} columns={columns} /> */}
