@@ -46,7 +46,7 @@ export default function ProductTable() {
   if (!data || data.length === 0) return <div>Loading...</div>;
 
   return (
-    <div className="w-full h-screen flex justify-center items-center ">
+    <div className="w-full h-screen gap-y-10 flex flex-col justify-center items-center ">
       {/* use share media here */}
       <button
         className=" bg-blue-400 px-4 py-2 rounded text-white mr-2"
@@ -54,12 +54,22 @@ export default function ProductTable() {
       >
         Share Image
       </button>
-
       <button
         className=" bg-green-400 px-4 py-2 rounded text-white"
         onClick={() => shareMediaFile({ url: "/cat.mp4", type: "video" })}
       >
         Share Video
+      </button>
+      <button
+        className=" bg-green-400 px-4 py-2 rounded text-white"
+        onClick={() =>
+          shareMediaFile({
+            url: "https://assets.csm-staging.zero-one.cloud/brand-assets/1qxs8ce2j1rj40ct09mr7rp6bc_078d1e264a.mp4",
+            type: "video",
+          })
+        }
+      >
+        Share Video Public URl
       </button>
 
       {/* <BasicTable data={data} columns={columns} /> */}
