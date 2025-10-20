@@ -51,7 +51,7 @@ export default function ProductTable() {
       <button
         onClick={() =>
           shareImageFile(
-            "https://assets.csm-staging.zero-one.cloud/brand-assets/1qxs8ce2j1rj40ct09mr7rp6bc_078d1e264a.mp4"
+            "/cat.png"
           )
         }
       >
