@@ -48,7 +48,7 @@ export default function ProductTable() {
   return (
     <div>
       {/* use share image here */}
-      <button onClick={() => shareImageFile("/generated/now-playing.png")}>
+      <button onClick={() => shareImageFile("/cat.png")}>
         Share Image
       </button>
 
