@@ -48,7 +48,13 @@ export default function ProductTable() {
   return (
     <div>
       {/* use share image here */}
-      <button onClick={() => shareImageFile("/cat.png")}>
+      <button
+        onClick={() =>
+          shareImageFile(
+            "https://assets.csm-staging.zero-one.cloud/brand-assets/1qxs8ce2j1rj40ct09mr7rp6bc_078d1e264a.mp4"
+          )
+        }
+      >
         Share Image
       </button>
 
