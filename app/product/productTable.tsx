@@ -1,6 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 import "~/app.css";
+import { shareImageFile } from "~/components/ShareImage";
 import useElectronicGoods, {
   type ElectronicGoods,
 } from "~/mutations/useElectronicGoods";
@@ -44,5 +45,14 @@ export default function ProductTable() {
   if (error) return <div>{String(error)}</div>;
   if (!data || data.length === 0) return <div>Loading...</div>;
 
-  return <BasicTable data={data} columns={columns} />;
+  return (
+    <div>
+      {/* use share image here */}
+      <button onClick={() => shareImageFile("/generated/now-playing.png")}>
+        Share Image
+      </button>
+
+      <BasicTable data={data} columns={columns} />
+    </div>
+  );
 }
