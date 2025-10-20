@@ -46,19 +46,16 @@ export default function ProductTable() {
   if (!data || data.length === 0) return <div>Loading...</div>;
 
   return (
-    <div>
+    <div className="w-full h-screen flex justify-center items-center ">
       {/* use share image here */}
       <button
-        onClick={() =>
-          shareImageFile(
-            "/cat.png"
-          )
-        }
+        className=" bg-blue-400 "
+        onClick={() => shareImageFile("/cat.mp4")}
       >
         Share Image
       </button>
 
-      <BasicTable data={data} columns={columns} />
+      {/* <BasicTable data={data} columns={columns} /> */}
     </div>
   );
 }
