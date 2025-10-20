@@ -64,7 +64,6 @@ export default function ProductTable() {
       >
         Share Image from public url
       </button>
-
       <button
         className=" bg-green-400 px-4 py-2 rounded text-white"
         onClick={() => shareMediaFile({ url: "/cat.mp4", type: "video" })}
@@ -82,6 +81,18 @@ export default function ProductTable() {
       >
         Share Video Public URl
       </button>
+      <button
+        className=" bg-green-400 px-4 py-2 rounded text-white"
+        onClick={() =>
+          shareMediaFile({
+            url: "https://cdn.vlipsy.com/clips/YvbfprNp/480p-watermark.mp4?token=v1_f_1761053794_eoE6e6aSU",
+            type: "video",
+          })
+        }
+      >
+        Share Video Public URl (another link)
+      </button>
+      
       {/* <BasicTable data={data} columns={columns} /> */}
     </div>
   );
