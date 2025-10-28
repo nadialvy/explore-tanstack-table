@@ -41,10 +41,34 @@ export async function shareMediaFile(options: ShareMediaOptions) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
 
+    // 🔍 DEBUG: Log response headers
+    console.group("📥 Fetch Response Debug");
+    console.log("URL:", url);
+    console.log("Status:", res.status);
+    console.log("Content-Type:", res.headers.get("content-type"));
+    console.log("Content-Length:", res.headers.get("content-length"));
+    console.log("Content-Disposition:", res.headers.get("content-disposition"));
+    console.log(
+      "Access-Control-Allow-Origin:",
+      res.headers.get("access-control-allow-origin")
+    );
+    console.log("All Headers:");
+    res.headers.forEach((value, key) => {
+      console.log(`  ${key}: ${value}`);
+    });
+    console.groupEnd();
+
     const blob = await res.blob();
 
     let mimeType = blob.type;
     let finalFilename = filename;
+
+    // 🔍 DEBUG: Log blob properties
+    console.group("📦 Blob Debug");
+    console.log("Blob Type:", blob.type);
+    console.log("Blob Size:", blob.size, "bytes");
+    console.log("URL Extension:", url.split("?")[0].split(".").pop());
+    console.groupEnd();
 
     // Deteksi extension dari URL untuk MIME type & filename fallback
     const urlPath = url.split("?")[0]; // Remove query params
@@ -121,16 +145,35 @@ export async function shareMediaFile(options: ShareMediaOptions) {
     const shareTitle = title || `Bagikan ${mediaType}`;
     const shareText = text || "Cek ini!";
 
+    // 🔍 DEBUG: Log final File object
+    console.group("📤 File Object Debug");
+    console.log("File Name:", file.name);
+    console.log("File Type:", file.type);
+    console.log("File Size:", file.size, "bytes");
+    console.log("Media Type:", mediaType);
+    console.log(
+      "Can Share Check:",
+      (navigator as any).canShare?.({ files: [file] })
+    );
+    console.groupEnd();
+
     if (
       (navigator as any).canShare &&
       (navigator as any).canShare({ files: [file] })
     ) {
-      await (navigator as any).share({
-        title: shareTitle,
-        text: shareText,
-        files: [file],
-      });
-      return { ok: true, method: "web-share" as const, fileType: mediaType };
+      console.log("✅ Attempting Web Share API...");
+      try {
+        await (navigator as any).share({
+          title: shareTitle,
+          text: shareText,
+          files: [file],
+        });
+        console.log("✅ Share successful!");
+        return { ok: true, method: "web-share" as const, fileType: mediaType };
+      } catch (shareError) {
+        console.error("❌ Share failed:", shareError);
+        throw shareError;
+      }
     }
 
     // fallback => download
