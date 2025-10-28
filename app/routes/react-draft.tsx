@@ -13,15 +13,12 @@ export default function ReactDraftEditor() {
 
   useEffect(() => {
     // Polyfill global for draft-js
-    if (typeof window !== 'undefined' && !(window as any).global) {
+    if (typeof window !== "undefined" && !(window as any).global) {
       (window as any).global = window;
     }
 
     // Dynamic import only on client-side
-    Promise.all([
-      import("react-draft-wysiwyg"),
-      import("draft-js"),
-    ])
+    Promise.all([import("react-draft-wysiwyg"), import("draft-js")])
       .then(([EditorModule, DraftJSModule]) => {
         console.log("Modules loaded:", { EditorModule, DraftJSModule });
         const { Editor } = EditorModule;
@@ -87,7 +84,8 @@ export default function ReactDraftEditor() {
       <div className="w-full min-h-screen flex flex-col items-center justify-center">
         <div className="text-gray-500">Loading editor...</div>
         <div className="text-xs text-gray-400 mt-2">
-          Status: isMounted={String(isMounted)}, hasEditor={String(!!EditorComponent)}, hasState={String(!!editorState)}
+          Status: isMounted={String(isMounted)}, hasEditor=
+          {String(!!EditorComponent)}, hasState={String(!!editorState)}
         </div>
       </div>
     );
