@@ -8,4 +8,5 @@ export default [
   route("lexical", "routes/lexical.tsx"),
   route("react-draft", "routes/react-draft.tsx"),
   route("quill", "routes/quill.tsx"),
+  route("slate", "routes/slate.tsx"),
 ] satisfies RouteConfig;
