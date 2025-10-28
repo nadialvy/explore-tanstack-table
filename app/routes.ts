@@ -5,6 +5,6 @@ export default [
   route("products", "routes/products.tsx"),
   route("share-media", "routes/share-media.tsx"),
   route("tiptap", "routes/tiptap.tsx"),
-  route("simple-tiptap", "routes/simple-tiptap.tsx"),
   route("lexical", "routes/lexical.tsx"),
+  route("react-draft", "routes/react-draft.tsx"),
 ] satisfies RouteConfig;
