@@ -12,7 +12,6 @@ export default function ReactDraftEditor() {
   const lastContent = useRef("");
 
   useEffect(() => {
-    // Polyfill global for draft-js
     if (typeof window !== "undefined" && !(window as any).global) {
       (window as any).global = window;
     }

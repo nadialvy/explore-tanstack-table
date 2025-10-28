@@ -7,4 +7,5 @@ export default [
   route("tiptap", "routes/tiptap.tsx"),
   route("lexical", "routes/lexical.tsx"),
   route("react-draft", "routes/react-draft.tsx"),
+  route("quill", "routes/quill.tsx"),
 ] satisfies RouteConfig;
