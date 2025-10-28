@@ -6,4 +6,5 @@ export default [
   route("share-media", "routes/share-media.tsx"),
   route("tiptap", "routes/tiptap.tsx"),
   route("simple-tiptap", "routes/simple-tiptap.tsx"),
+  route("lexical", "routes/lexical.tsx"),
 ] satisfies RouteConfig;

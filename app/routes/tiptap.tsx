@@ -2,6 +2,8 @@ import { TextStyleKit } from "@tiptap/extension-text-style";
 import type { Editor } from "@tiptap/react";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import { PerformanceMonitor } from "../components/PerformanceMonitor";
 
 const extensions = [TextStyleKit, StarterKit];
 
@@ -207,43 +209,71 @@ function MenuBar({ editor }: { editor: Editor | null }) {
 }
 
 export default () => {
+  const [updateCount, setUpdateCount] = useState(0);
+  const updateStartTime = useRef(0);
+
   const editor = useEditor({
     extensions,
     immediatelyRender: false,
     content: `
-<h2>
-  Hi there,
-</h2>
-<p>
-  this is a <em>basic</em> example of <strong>Tiptap</strong>. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:
-</p>
-<ul>
-  <li>
-    That’s a bullet list with one …
-  </li>
-  <li>
-    … or two list items.
-  </li>
-</ul>
-<p>
-  Isn’t that great? And all of that is editable. But wait, there’s more. Let’s try a code block:
-</p>
-<pre><code class="language-css">body {
-  display: none;
-}</code></pre>
-<p>
-  I know, I know, this is impressive. It’s only the tip of the iceberg though. Give it a try and click a little bit around. Don’t forget to check the other examples too.
-</p>
-<blockquote>
-  Wow, that’s amazing. Good work, boy! 👏
-  <br />
-  — Mom
-</blockquote/>`,
+      # Welcome to TipTap
+      
+      This is a simple example of a TipTap editor with basic formatting options.
+      
+      ## Features
+      
+      - Bold
+      - Italic
+      - Strikethrough
+      - Code
+      - Headings
+      - Lists
+      - Blockquotes
+      - Horizontal rules
+      - Hard breaks
+      
+      ## Getting Started
+      
+      To get started, simply click on the buttons in the menu bar to apply formatting to your text. You can also use the keyboard shortcuts for each action.
+      
+      Enjoy editing!
+    `,
+    onUpdate: ({ editor }) => {
+      const duration = performance.now() - updateStartTime.current;
+      (window as any).recordUpdate_Tiptap?.(duration);
+      setUpdateCount((prev) => prev + 1);
+    },
+    onBeforeCreate: () => {
+      updateStartTime.current = performance.now();
+    },
+    onSelectionUpdate: () => {
+      updateStartTime.current = performance.now();
+    },
   });
+
+  useEffect(() => {
+    if (editor) {
+      const handler = () => {
+        updateStartTime.current = performance.now();
+      };
+      editor.on("beforeTransaction", handler);
+      return () => {
+        editor.off("beforeTransaction", handler);
+      };
+    }
+    return undefined;
+  }, [editor]);
 
   return (
     <div className="w-full h-screen gap-y-3 flex flex-col justify-start items-center p-4">
       <h2 className="text-2xl font-bold mb-4"> TipTap Rich Text Editor</h2>
+
+      <PerformanceMonitor
+        editorName="Tiptap"
+        updateCount={updateCount}
+        onMeasureUpdate={() => {}}
+      />
+
       <div className="border border-gray-300 rounded-md w-full max-w-3xl p-4">
         <MenuBar editor={editor} />
         <EditorContent editor={editor} />
